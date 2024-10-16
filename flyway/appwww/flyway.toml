@@ -1,0 +1,28 @@
+databaseType = "PostgreSql"
+id = "e85e5c2c-27c0-458b-8e1a-921d0b99e000"
+name = "appwww"
+
+[flyway]
+locations = [ "filesystem:migrations" ]
+mixed = true
+outOfOrder = true
+schemaModelLocation = "schema-model"
+validateMigrationNaming = true
+
+  [flyway.check]
+  majorTolerance = 0
+
+[flywayDesktop]
+developmentEnvironment = "development"
+schemaModel = "schema-model"
+shadowEnvironment = "shadow"
+
+[redgateCompare]
+filterFile = "filter.rgf"
+
+[redgateCompare.postgresql.options.ignores]
+ignoreNewlinesInTextObjects = "off"
+
+[environments.appwww]
+url = "jdbc:postgresql://localhost:5432/appwww"
+schemas = [ "app" ]
