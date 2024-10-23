@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="db" uuid="36650b7a-1c22-4fe5-b1f4-38e760b6e5dd">
+    <data-source source="LOCAL" name="db" uuid="95b16c67-d141-404e-b4df-fa4051be0065">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\jednach\Desktop\lab\lab\db.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\jednach\Documents\GitHub\App_WWW\lab\lab\db.sqlite3</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
