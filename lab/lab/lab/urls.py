@@ -18,15 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from app.views import (
-    osoba_list, osoba_detail, osoba_search,
+    OsobaDetailAPIView, OsobaListAPIView, OsobaSearchAPIView,
     stanowisko_list, stanowisko_detail
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('osoby/', osoba_list, name='osoba-list'),
-    path('osoby/<int:pk>/', osoba_detail, name='osoba-detail'),
-    path('osoby/search/<str:nazwa_fragment>/', osoba_search, name='osoba-search'),
+    path('osoby/<int:pk>/', OsobaDetailAPIView.as_view(), name='osoba-detail'),
+    path('osoby/', OsobaListAPIView.as_view(), name='osoba-list'),
+    path('osoby/search/<str:nazwa_fragment>/', OsobaSearchAPIView.as_view(), name='osoba-search'),
     path('stanowiska/', stanowisko_list, name='stanowisko-list'),
     path('stanowiska/<int:pk>/', stanowisko_detail, name='stanowisko-detail'),
 ]
