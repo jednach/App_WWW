@@ -17,9 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from app.views import OsobaDetailAPIView, OsobaListAPIView, OsobaSearchAPIView, StanowiskoDetailAPIView, \
+    StanowiskoListAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('osoby/<int:pk>/', OsobaDetailAPIView.as_view(), name='osoba-detail'),
+    path('osoby/', OsobaListAPIView.as_view(), name='osoba-list'),
+    path('osoby/search/<str:nazwa_fragment>/', OsobaSearchAPIView.as_view(), name='osoba-search'),
+    path('stanowiska/<int:pk>/', StanowiskoDetailAPIView.as_view(), name='stanowisko-detail'),
+    path('stanowiska/', StanowiskoListAPIView.as_view(), name='stanowisko-list'),
 ]
 
 if settings.DEBUG:
