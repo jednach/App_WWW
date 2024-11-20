@@ -1,14 +1,18 @@
 from django.db import models
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+import re
 
 # Create your models here.
 # deklaracja statycznej listy wyboru do wykorzystania w klasie modelu
-MONTHS = models.IntegerChoices('Miesiace', 'Styczeń Luty Marzec Kwiecień Maj Czerwiec Lipiec Sierpień Wrzesień Październik Listopad Grudzień')
+MONTHS = models.IntegerChoices('Miesiace',
+                               'Styczeń Luty Marzec Kwiecień Maj Czerwiec Lipiec Sierpień Wrzesień Październik Listopad Grudzień')
 
 SHIRT_SIZES = (
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-    )
+    ('S', 'Small'),
+    ('M', 'Medium'),
+    ('L', 'Large'),
+)
 
 
 class Team(models.Model):
@@ -20,7 +24,6 @@ class Team(models.Model):
 
 
 class Person(models.Model):
-
     name = models.CharField(max_length=60)
     shirt_size = models.CharField(max_length=1, choices=SHIRT_SIZES, default=SHIRT_SIZES[0][0])
     month_added = models.IntegerField(choices=MONTHS.choices, default=MONTHS.choices[0][0])
@@ -29,10 +32,12 @@ class Person(models.Model):
     def __str__(self):
         return self.name
 
+
 class Coach(models.Model):
     name = models.CharField(max_length=50)
     age = models.IntegerField(null=True, blank=True)
-    team = models.ForeignKey(Team,on_delete=models.CASCADE, null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
+
 
 class Stanowisko(models.Model):
     nazwa = models.CharField(max_length=100, null=False, blank=False)
@@ -40,6 +45,7 @@ class Stanowisko(models.Model):
 
     def __str__(self):
         return self.nazwa
+
 
 class Osoba(models.Model):
     class Plec(models.IntegerChoices):
@@ -50,11 +56,29 @@ class Osoba(models.Model):
     imie = models.CharField(max_length=50, null=False, blank=False)
     nazwisko = models.CharField(max_length=50, null=False, blank=False)
     plec = models.IntegerField(choices=Plec.choices, null=False, blank=False)
-    stanowisko = models.ForeignKey(Stanowisko, on_delete=models.CASCADE)
-    data_dodania = models.DateField(auto_now_add=True)
+    stanowisko = models.ForeignKey('Stanowisko', on_delete=models.CASCADE)
+    data_dodania = models.DateField(default=timezone.now)
 
     def __str__(self):
         return f"{self.imie} {self.nazwisko}"
 
     class Meta:
         ordering = ['-nazwisko']
+
+        # Metoda walidacji
+    def clean(self):
+            # Walidacja pola 'imie' i 'nazwisko' - może zawierać tylko litery
+        if not re.match(r'^[a-zA-Z]+$', self.imie):
+            raise ValidationError({'imie': 'Imię może zawierać tylko litery.'})
+
+        if not re.match(r'^[a-zA-Z]+$', self.nazwisko):
+            raise ValidationError({'nazwisko': 'Nazwisko może zawierać tylko litery.'})
+
+            # Walidacja pola 'data_dodania' - nie może być z przyszłości
+        if self.data_dodania > timezone.now().date():
+            raise ValidationError({'data_dodania': 'Data dodania nie może być z przyszłości.'})
+
+        # Nadpisanie metody 'save' aby uwzględnić walidację
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Wywołanie metody 'clean' przed zapisaniem obiektu
+        super().save(*args, **kwargs)
