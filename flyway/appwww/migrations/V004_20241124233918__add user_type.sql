@@ -1,0 +1,2 @@
+ALTER TABLE app.users
+ADD COLUMN type VARCHAR(255);

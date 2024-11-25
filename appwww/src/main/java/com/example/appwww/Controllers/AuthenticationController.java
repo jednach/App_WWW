@@ -2,7 +2,6 @@ package com.example.appwww.Controllers;
 
 import com.example.appwww.Dtos.*;
 import com.example.appwww.Models.Entities.RefreshTokenEntity;
-import com.example.appwww.Models.Entities.UserEntity;
 import com.example.appwww.Services.AuthenticationServiceImpl;
 import com.example.appwww.Services.JwtServiceImpl;
 import com.example.appwww.Services.RefreshTokenServiceImpl;
@@ -33,10 +32,10 @@ public class AuthenticationController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @PostMapping("/singup")
+    @PostMapping("/singup/patient")
     public ResponseEntity<?> registerCompetitor(
-            @RequestBody RegisterUserRequestDto registerUserRequestDto) {
-        authenticationService.signup(registerUserRequestDto);
+            @RequestBody RegisterPatientRequestDto registerPatientRequestDto) {
+        authenticationService.signup(registerPatientRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

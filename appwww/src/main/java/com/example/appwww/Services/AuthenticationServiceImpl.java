@@ -1,10 +1,11 @@
 package com.example.appwww.Services;
 
 import com.example.appwww.Dtos.LoginUserRequestDto;
-import com.example.appwww.Dtos.RegisterUserRequestDto;
-import com.example.appwww.Models.Entities.RoleEntity;
-import com.example.appwww.Models.Entities.UserEntity;
-import com.example.appwww.Models.Entities.VerificationTokenEntity;
+import com.example.appwww.Dtos.RegisterPatientRequestDto;
+import com.example.appwww.Models.Entities.*;
+import com.example.appwww.Models.Enums.UserType;
+import com.example.appwww.Repositories.PatientBookRepository;
+import com.example.appwww.Repositories.PatientRepository;
 import com.example.appwww.Repositories.RoleRepository;
 import com.example.appwww.Repositories.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -33,6 +34,8 @@ public class AuthenticationServiceImpl {
     private final AuthenticationManager authenticationManager;
     private final EmailServiceImpl emailService;
     private final VerificationTokenServiceImpl verificationTokenService;
+    private final PatientRepository patientRepository;
+    private final PatientBookRepository patientBookRepository;
 
     @Autowired
     public AuthenticationServiceImpl(
@@ -40,7 +43,9 @@ public class AuthenticationServiceImpl {
             PasswordEncoder passwordEncoder,
             RoleRepository roleRepository,
             AuthenticationManager authenticationManager,
-            EmailServiceImpl emailService, VerificationTokenServiceImpl verificationTokenService
+            EmailServiceImpl emailService,
+            VerificationTokenServiceImpl verificationTokenService,
+            PatientRepository patientRepository, PatientBookRepository patientBookRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -48,17 +53,30 @@ public class AuthenticationServiceImpl {
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
+        this.patientRepository = patientRepository;
+        this.patientBookRepository = patientBookRepository;
     }
 
-    public void signup(RegisterUserRequestDto registerUserRequestDto){
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(registerUserRequestDto.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(registerUserRequestDto.getPassword()));
-        userEntity.setPhoneNumber(registerUserRequestDto.getPhoneNumber());
-        userRepository.save(userEntity);
+    public void signup(RegisterPatientRequestDto registerPatientRequestDto){
+        PatientEntity patientEntity = new PatientEntity();
+        patientEntity.setFirstName(registerPatientRequestDto.getFirstName());
+        patientEntity.setLastName(registerPatientRequestDto.getLastName());
+        patientEntity.setGender(patientEntity.isGender());
+        patientEntity.setPeselNumber(registerPatientRequestDto.getPeselNumber());
+        patientEntity.setBirthDate(registerPatientRequestDto.getBirthDate());
+        patientEntity.setEmail(registerPatientRequestDto.getEmail());
+        patientEntity.setPassword(passwordEncoder.encode(registerPatientRequestDto.getPassword()));
+        patientEntity.setPhoneNumber(registerPatientRequestDto.getPhoneNumber());
+        patientEntity.setType(UserType.PATIENT);
+        patientRepository.save(patientEntity);
 
-        String token = verificationTokenService.generateVerificationToken(userEntity);
-        sendVerificationEmail(userEntity, token);
+        PatientBookEntity patientBookEntity = new PatientBookEntity();
+        patientBookEntity.setPatient(patientEntity);
+        patientBookEntity.setPatientInfo(registerPatientRequestDto.getPatientInfo());
+        patientBookRepository.save(patientBookEntity);
+
+        String token = verificationTokenService.generateVerificationToken(patientEntity);
+        sendVerificationEmail(patientEntity, token);
     }
 
     public Authentication authenticate(LoginUserRequestDto loginUserRequestDto) {
@@ -87,7 +105,7 @@ public class AuthenticationServiceImpl {
             if (verificationToken.getVerificationTokenExpiresAt().isBefore(LocalDateTime.now()))
                 throw new RuntimeException("Verification code has expired");
             if (verificationToken.getVerificationToken().equals(token)) {
-                RoleEntity userRole = roleRepository.findByName("USER").orElseThrow(
+                RoleEntity userRole = roleRepository.findByName("PATIENT").orElseThrow(
                         () -> new EntityNotFoundException("Role not found")
                 );
                 user.setEnabled(true);

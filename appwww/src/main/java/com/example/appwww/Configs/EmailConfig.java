@@ -26,6 +26,7 @@ public class EmailConfig {
 
         Properties properties = mailSender.getJavaMailProperties();
         properties.put("mail.transport.protocol", "smtp");
+        properties.put("mail.smtp.ssl.trust", "*");
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.debug", "true");

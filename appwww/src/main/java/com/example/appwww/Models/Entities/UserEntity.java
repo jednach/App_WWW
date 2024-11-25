@@ -1,6 +1,7 @@
 package com.example.appwww.Models.Entities;
 
 import com.example.appwww.Models.BaseEntityAudit;
+import com.example.appwww.Models.Enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -18,8 +19,12 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users", schema = "app")
 public class UserEntity extends BaseEntityAudit implements UserDetails {
+
+    @Enumerated(value = EnumType.STRING)
+    private UserType type;
 
     @NotNull @Email
     private String email;

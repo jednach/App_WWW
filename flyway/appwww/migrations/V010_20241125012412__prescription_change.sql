@@ -1,0 +1,2 @@
+ALTER TABLE app.prescriptions
+RENAME COLUMN realizedBy_pharmacy_id TO realized_by_pharmacy_id;

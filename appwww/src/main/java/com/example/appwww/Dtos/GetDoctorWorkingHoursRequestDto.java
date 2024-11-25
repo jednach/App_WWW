@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.DayOfWeek;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterUserRequestDto {
-    private String email;
-    private String password;
-    private String phoneNumber;
+public class GetDoctorWorkingHoursRequestDto {
+    private DayOfWeek dayOfWeek;
 }
