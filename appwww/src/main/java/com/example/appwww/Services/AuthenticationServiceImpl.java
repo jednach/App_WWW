@@ -70,11 +70,6 @@ public class AuthenticationServiceImpl {
         patientEntity.setType(UserType.PATIENT);
         patientRepository.save(patientEntity);
 
-        PatientBookEntity patientBookEntity = new PatientBookEntity();
-        patientBookEntity.setPatient(patientEntity);
-        patientBookEntity.setPatientInfo(registerPatientRequestDto.getPatientInfo());
-        patientBookRepository.save(patientBookEntity);
-
         String token = verificationTokenService.generateVerificationToken(patientEntity);
         sendVerificationEmail(patientEntity, token);
     }

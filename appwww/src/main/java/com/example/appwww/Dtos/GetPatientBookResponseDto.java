@@ -6,18 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterPatientRequestDto {
-    private String email;
-    private String password;
-    private String phoneNumber;
-    private String firstName;
-    private String lastName;
-    private boolean gender;
+public class GetPatientBookResponseDto {
+    private Long patientBookId;
+    private String patientFirstName;
+    private String patientLastName;
     private String peselNumber;
     private LocalDate birthDate;
+    private boolean gender;
+    private String patientInfo;
+    private List<GetVisitInfoResponseDto> visits;
 }

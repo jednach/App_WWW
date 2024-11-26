@@ -9,15 +9,15 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class RegisterPatientRequestDto {
-    private String email;
-    private String password;
-    private String phoneNumber;
+@AllArgsConstructor
+public class GetPatientResponseDto {
+    private Long patientId;
+    private Long patientBookId;
     private String firstName;
     private String lastName;
-    private boolean gender;
-    private String peselNumber;
     private LocalDate birthDate;
+    private boolean gender;
+    private String phoneNumber;
+    private String peselNumber;
 }

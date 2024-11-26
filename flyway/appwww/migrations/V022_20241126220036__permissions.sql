@@ -1,0 +1,40 @@
+INSERT INTO app.permissions (version, name, description)
+VALUES
+    (0, 'MEDICINE_READ', 'Medicine read access'),
+    (0, 'PATIENTBOOK_READ', 'Patient book read access'),
+    (0, 'PATIENTBOOK_CREATE', 'Patient book read access'),
+    (0, 'PATIENT_READ', 'Patient read access'),
+    (0, 'PRESCRIPTION_READ', 'Prescription read access'),
+    (0, 'PRESCRIPTION_CREATE', 'Prescription create access'),
+    (0, 'PRESCRIPTION_UPDATE', 'Prescription update access'),
+    (0, 'PRESCRIPTION_DELETE', 'Prescription delete access'),
+    (0, 'REGISTRATION_READ', 'Registration read access'),
+    (0, 'REGISTRATION_CREATE', 'Registration create access'),
+    (0, 'REGISTRATION_DELETE', 'Registration delete access'),
+    (0, 'VISIT_CREATE', 'Visit create access');
+
+INSERT INTO app.permission_role (version, role_id, permission_id)
+VALUES
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'MEDICINE_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'PATIENTBOOK_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'PATIENTBOOK_CREATE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'PATIENT_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_DELETE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'ADMIN'), (SELECT id FROM app.permissions WHERE name = 'REGISTRATION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'MEDICINE_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'PATIENTBOOK_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'PATIENTBOOK_CREATE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'PATIENT_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_CREATE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_DELETE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'REGISTRATION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'DOCTOR'), (SELECT id FROM app.permissions WHERE name = 'VISIT_CREATE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PHARMACY'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PHARMACY'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_UPDATE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PATIENT'), (SELECT id FROM app.permissions WHERE name = 'PATIENTBOOK_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PATIENT'), (SELECT id FROM app.permissions WHERE name = 'PRESCRIPTION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PATIENT'), (SELECT id FROM app.permissions WHERE name = 'REGISTRATION_READ')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PATIENT'), (SELECT id FROM app.permissions WHERE name = 'REGISTRATION_CREATE')),
+    (0, (SELECT id FROM app.roles WHERE name = 'PATIENT'), (SELECT id FROM app.permissions WHERE name = 'REGISTRATION_DELETE'));
