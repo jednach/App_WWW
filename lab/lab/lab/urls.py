@@ -17,18 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from rest_framework.authtoken import views as drf_views
 from app.views import (
-    osoba_list, osoba_detail, osoba_search,
-    stanowisko_list, stanowisko_detail
+    osoba_list, osoba_detail, osoba_update, osoba_delete,
+    stanowisko_list, stanowisko_detail, stanowisko_members
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('osoby/', osoba_list, name='osoba-list'),
     path('osoby/<int:pk>/', osoba_detail, name='osoba-detail'),
-    path('osoby/search/<str:nazwa_fragment>/', osoba_search, name='osoba-search'),
+    path('osoby/update/<int:pk>/', osoba_update, name='osoba-update'),
+    path('osoby/delete/<int:pk>/', osoba_delete, name='osoba-delete'),
     path('stanowiska/', stanowisko_list, name='stanowisko-list'),
     path('stanowiska/<int:pk>/', stanowisko_detail, name='stanowisko-detail'),
+    path('stanowiska/members/<int:pk>/', stanowisko_members, name='stanowisko-members'),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api-token-auth/', drf_views.obtain_auth_token, name='api_token_auth'),
 ]
 
 if settings.DEBUG:
