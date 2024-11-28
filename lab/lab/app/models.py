@@ -70,6 +70,9 @@ class Osoba(models.Model):
 
     class Meta:
         ordering = ['-nazwisko']
+        permissions = [
+            ("can_view_other_persons", "Can view other persons"),
+        ]
 
         # Metoda walidacji
     def clean(self):
