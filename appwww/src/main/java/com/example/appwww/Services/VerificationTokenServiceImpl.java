@@ -56,6 +56,14 @@ public class VerificationTokenServiceImpl {
         verificationTokenRepository.save(verificationToken);
     }
 
+    public void enableUserCreatedByAdmin(UserEntity user){
+        VerificationTokenEntity verificationToken = new VerificationTokenEntity();
+        verificationToken.setUser(user);
+        verificationToken.setVerificationToken(null);
+        verificationToken.setVerificationTokenExpiresAt(null);
+        verificationTokenRepository.save(verificationToken);
+    }
+
     private String verificationTokenCreator(String email){
         String token = Jwts.builder()
                 .setSubject(email)

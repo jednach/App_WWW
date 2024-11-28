@@ -1,13 +1,12 @@
 package com.example.appwww.Services;
 
+import com.example.appwww.Dtos.CreateDoctorRequestDto;
+import com.example.appwww.Dtos.CreatePharmacyRequestDto;
 import com.example.appwww.Dtos.LoginUserRequestDto;
 import com.example.appwww.Dtos.RegisterPatientRequestDto;
 import com.example.appwww.Models.Entities.*;
 import com.example.appwww.Models.Enums.UserType;
-import com.example.appwww.Repositories.PatientBookRepository;
-import com.example.appwww.Repositories.PatientRepository;
-import com.example.appwww.Repositories.RoleRepository;
-import com.example.appwww.Repositories.UserRepository;
+import com.example.appwww.Repositories.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.mail.MessagingException;
@@ -19,12 +18,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class AuthenticationServiceImpl {
+
 
     @Value("${security.jwt.secret-key}")
     private String secretKey;
@@ -35,7 +36,8 @@ public class AuthenticationServiceImpl {
     private final EmailServiceImpl emailService;
     private final VerificationTokenServiceImpl verificationTokenService;
     private final PatientRepository patientRepository;
-    private final PatientBookRepository patientBookRepository;
+    private final DoctorRepository doctorRepository;
+    private final PharmacyRepository pharmacyRepository;
 
     @Autowired
     public AuthenticationServiceImpl(
@@ -45,8 +47,8 @@ public class AuthenticationServiceImpl {
             AuthenticationManager authenticationManager,
             EmailServiceImpl emailService,
             VerificationTokenServiceImpl verificationTokenService,
-            PatientRepository patientRepository, PatientBookRepository patientBookRepository
-    ) {
+            PatientRepository patientRepository,
+            DoctorRepository doctorRepository, PharmacyRepository pharmacyRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -54,7 +56,8 @@ public class AuthenticationServiceImpl {
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
         this.patientRepository = patientRepository;
-        this.patientBookRepository = patientBookRepository;
+        this.doctorRepository = doctorRepository;
+        this.pharmacyRepository = pharmacyRepository;
     }
 
     public void signup(RegisterPatientRequestDto registerPatientRequestDto){
@@ -72,6 +75,51 @@ public class AuthenticationServiceImpl {
 
         String token = verificationTokenService.generateVerificationToken(patientEntity);
         sendVerificationEmail(patientEntity, token);
+    }
+
+    @Transactional
+    public void createDoctor(CreateDoctorRequestDto createDoctorRequestDto){
+        DoctorEntity doctorEntity = new DoctorEntity();
+        doctorEntity.setFirstName(createDoctorRequestDto.getFirstName());
+        doctorEntity.setLastName(createDoctorRequestDto.getLastName());
+        doctorEntity.setEmail(createDoctorRequestDto.getEmail());
+        doctorEntity.setPassword(passwordEncoder.encode(createDoctorRequestDto.getPassword()));
+        doctorEntity.setPhoneNumber(createDoctorRequestDto.getPhoneNumber());
+        doctorEntity.setType(UserType.DOCTOR);
+        doctorEntity.setEnabled(true);
+
+        RoleEntity userRole = roleRepository.findByName("DOCTOR").orElseThrow(
+                () -> new EntityNotFoundException("Role not found")
+        );
+        doctorEntity.getRoles().add(userRole);
+        userRole.getUsers().add(doctorEntity);
+        roleRepository.save(userRole);
+        doctorRepository.save(doctorEntity);
+
+        verificationTokenService.enableUserCreatedByAdmin(doctorEntity);
+    }
+
+    @Transactional
+    public void createPharmacy(CreatePharmacyRequestDto createPharmacyRequestDto){
+        PharmacyEntity pharmacyEntity = new PharmacyEntity();
+        pharmacyEntity.setPharmacyName(createPharmacyRequestDto.getPharmacyName());
+        pharmacyEntity.setPharmacyAddress(createPharmacyRequestDto.getPharmacyAddress());
+        pharmacyEntity.setPharmacyCity(createPharmacyRequestDto.getPharmacyCity());
+        pharmacyEntity.setEmail(createPharmacyRequestDto.getEmail());
+        pharmacyEntity.setPassword(passwordEncoder.encode(createPharmacyRequestDto.getPassword()));
+        pharmacyEntity.setPhoneNumber(createPharmacyRequestDto.getPhoneNumber());
+        pharmacyEntity.setType(UserType.PHARMACY);
+        pharmacyEntity.setEnabled(true);
+
+        RoleEntity userRole = roleRepository.findByName("PHARMACY").orElseThrow(
+                () -> new EntityNotFoundException("Role not found")
+        );
+        pharmacyEntity.getRoles().add(userRole);
+        userRole.getUsers().add(pharmacyEntity);
+        roleRepository.save(userRole);
+        pharmacyRepository.save(pharmacyEntity);
+
+        verificationTokenService.enableUserCreatedByAdmin(pharmacyEntity);
     }
 
     public Authentication authenticate(LoginUserRequestDto loginUserRequestDto) {
