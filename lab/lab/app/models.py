@@ -46,6 +46,10 @@ class Stanowisko(models.Model):
     def __str__(self):
         return self.nazwa
 
+from django.contrib.auth.models import User
+
+def get_default_user():
+    return User.objects.first()
 
 class Osoba(models.Model):
     class Plec(models.IntegerChoices):
@@ -58,6 +62,8 @@ class Osoba(models.Model):
     plec = models.IntegerField(choices=Plec.choices, null=False, blank=False)
     stanowisko = models.ForeignKey('Stanowisko', on_delete=models.CASCADE)
     data_dodania = models.DateField(default=timezone.now)
+    wlasciciel = models.ForeignKey(User, on_delete=models.CASCADE, related_name='osoby', null=True)
+
 
     def __str__(self):
         return f"{self.imie} {self.nazwisko}"
